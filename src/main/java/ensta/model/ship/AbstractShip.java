@@ -1,7 +1,10 @@
+package ensta.model.ship;
+
 
 import ensta.util.LabelShip;
-import ensta.util.LabelShip;
+import ensta.util.NameShip;
 import ensta.util.Orientation;
+import ensta.util.*;
 
 public abstract class AbstractShip {
 
@@ -11,7 +14,7 @@ public abstract class AbstractShip {
 
 	protected Orientation orientation;
 
-	protected LengthShip length;
+	protected ShipLength length;
 
 	public LabelShip getType() {
         return this.type;
@@ -21,7 +24,7 @@ public abstract class AbstractShip {
         return this.name;
     }
 
-    public LengthShip getLength() {
+    public ShipLength getLength() {
         return this.length;
     }
 
@@ -46,10 +49,11 @@ public abstract class AbstractShip {
      * @param orientation
      */
 
-    AbstractShip(NameShip name, LabelShip type, LengthShip length, Orientation orientation){
+    public AbstractShip(NameShip name, LabelShip type, ShipLength length, Orientation orientation){
     	this.name = name;
     	this.type = type;
     	this.length = length;
     	this.orientation = orientation;
     }
+}
 

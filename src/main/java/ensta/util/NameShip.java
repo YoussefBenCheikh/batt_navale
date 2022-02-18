@@ -1,6 +1,6 @@
 package ensta.util;
 
-public enum ShipName {
+public enum NameShip {
     DESTROYER,
     SUBMARINE,
     BATTLESHIP,

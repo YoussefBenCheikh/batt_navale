@@ -1,16 +1,18 @@
-//package ensta.model;
-
-//import ensta.model.ship.AbstractShip;
-//import ensta.util.Orientation;
+package ensta.model.Board;
+import ensta.model.ship.AbstractShip;
+import ensta.util.Orientation;
+import ensta.util.Coords;
+import ensta.util.*;
 
 public class Board implements IBoard {
+
 	private String name;
 	private Character[][] ships;
 	private boolean[][] hits;
 
 	private static final int DEFAULT_SIZE = 10;
-	private static final char EMPTY_SHIP_CELL = '.';
-	private static final boolean EMPTY_HIT_CELL = false;
+	private static final char EMPTY_SHIP = '.';
+	private static final boolean EMPTY_HIT= false;
 	
 	public Board() {
 	}
@@ -22,8 +24,8 @@ public class Board implements IBoard {
 
         for(int i = 0; i < size; i++){
             for(int j = 0; j < size; j++){
-                this.ships[i][j] = EMPTY_SHIP_CELL;
-                this.hits[i][j] = EMPTY_HIT_CELL;
+                this.ships[i][j] = EMPTY_SHIP;
+                this.hits[i][j] = EMPTY_HIT;
             }
         }
     }
@@ -84,41 +86,117 @@ public class Board implements IBoard {
 
 	}
 
-	// public boolean canPutShip(AbstractShip ship, Coords coords) {
-	// 	Orientation o = ship.getOrientation();
-	// 	int dx = 0, dy = 0;
-	// 	if (o == Orientation.EAST) {
-	// 		if (coords.getX() + ship.getLength() >= this.size) {
-	// 			return false;
-	// 		}
-	// 		dx = 1;
-	// 	} else if (o == Orientation.SOUTH) {
-	// 		if (coords.getY() + ship.getLength() >= this.size) {
-	// 			return false;
-	// 		}
-	// 		dy = 1;
-	// 	} else if (o == Orientation.NORTH) {
-	// 		if (coords.getY() + 1 - ship.getLength() < 0) {
-	// 			return false;
-	// 		}
-	// 		dy = -1;
-	// 	} else if (o == Orientation.WEST) {
-	// 		if (coords.getX() + 1 - ship.getLength() < 0) {
-	// 			return false;
-	// 		}
-	// 		dx = -1;
-	// 	}
 
-	// 	Coords iCoords = new Coords(coords);
+	@Override
+    public int getSize() {
+        return ships.length * ships[0].length;
+    }
 
-	// 	for (int i = 0; i < ship.getLength(); ++i) {
-	// 		if (this.hasShip(iCoords)) {
-	// 			return false;
-	// 		}
-	// 		iCoords.setX(iCoords.getX() + dx);
-	// 		iCoords.setY(iCoords.getY() + dy);
-	// 	}
+    @Override
+    public boolean hasShip(Coords coords) {
+        return ships[coords.getX()][coords.getY()] != EMPTY_SHIP;
+    }
 
-	// 	return true;
-	// }
+    @Override
+    public Boolean getHit(Coords coords){
+    	return hits[coords.getX()][coords.getY()];
+    }
+
+    @Override
+    public void setHit(boolean hit, Coords coords) {
+        hits[coords.getX()][coords.getY()] = hit;
+    }
+
+    @Override
+	public boolean canPutShip(AbstractShip ship, Coords coords) {
+		Orientation o = ship.getOrientation();
+		int dx = 0, dy = 0;
+		if (o == Orientation.EAST) {
+			if (coords.getX() + ship.getLength() >= this.size) {
+				return false;
+			}
+			dx = 1;
+		} else if (o == Orientation.SOUTH) {
+			if (coords.getY() + ship.getLength() >= this.size) {
+				return false;
+			}
+			dy = 1;
+		} else if (o == Orientation.NORTH) {
+			if (coords.getY() + 1 - ship.getLength() < 0) {
+				return false;
+			}
+			dy = -1;
+		} else if (o == Orientation.WEST) {
+			if (coords.getX() + 1 - ship.getLength() < 0) {
+				return false;
+			}
+			dx = -1;
+		}
+
+		Coords iCoords = new Coords(coords);
+
+		for (int i = 0; i < ship.getLength(); ++i) {
+			if (this.hasShip(iCoords)) {
+				return false;
+			}
+			iCoords.setX(iCoords.getX() + dx);
+			iCoords.setY(iCoords.getY() + dy);
+		}
+
+		return true;
+	}
+
+	
+	public void putShip(AbstractShip ship, Coords coords) {
+
+		int x = coords.getX()-1;
+		int y = coords.getY()-1;
+		int boardsizeX = ships.length;
+		int boardsizeY = ships[0].length;
+		int shipSize = ship.getLength().getValue();
+		Orientation o = ship.getOrientation();
+		int dx = 0, dy = 0;
+		switch (o) {
+                case NORTH:
+                    dy = -1;
+                    break;
+                case SOUTH:
+                    dy = 1;
+                    break;
+                case EAST:
+                    dx = 1;
+                    break;
+                case WEST:
+                    dx = -1;
+                    break;
+            }
+
+		
+		if ( 
+                (x+(shipSize*dx) > boardsizeX ) || 
+                (y+(shipSize*dy) > boardsizeY ) ||
+                (x+(shipSize*dx) < 0 ) || 
+                (y+(shipSize*dy) < 0 ) ||
+                (x < 0 ) || 
+                (y < 0 )
+            )
+
+		//throw new BoardPutShipException("off the board");
+
+		for (int i = 0; i < shipSize; i++) 
+            {
+                if (ships[(i*dy)+y][(i*dx)+x] != EMPTY_SHIP) {
+                    while (i > 0) {
+                        i--;
+                        ships[(i*dy)+y][(i*dx)+x] = EMPTY_SHIP;
+                    }
+                    //throw new BoardPutShipException("a ship is already there");
+                        
+                }
+
+                ships[(i*dy)+y][(i*dx)+x] = ship.getType().getValue();
+            }
+
+
+	}
 }
