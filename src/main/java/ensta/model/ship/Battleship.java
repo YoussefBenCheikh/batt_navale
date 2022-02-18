@@ -1,4 +1,4 @@
-package ensta.ship;
+package ensta.model.ship;
 import ensta.util.NameShip;
 import ensta.util.LabelShip;
 

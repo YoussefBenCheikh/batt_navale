@@ -55,5 +55,11 @@ public abstract class AbstractShip {
     	this.length = length;
     	this.orientation = orientation;
     }
+    public AbstractShip(LabelShip type, NameShip name, ShipLength length, Orientation orientation){
+    	this.name = name;
+    	this.type = type;
+    	this.length = length;
+    	this.orientation = orientation;
+    }
 }
 

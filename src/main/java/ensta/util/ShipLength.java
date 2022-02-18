@@ -18,6 +18,7 @@ public enum ShipLength {
         return Integer.toString(this.value);
     }
 	
+
 	private ShipLength(int value) 
     { 
         this.value = value; 

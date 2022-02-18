@@ -147,7 +147,7 @@ public class Board implements IBoard {
 	}
 
 	
-	public void putShip(AbstractShip ship, Coords coords) {
+	public void putShip(AbstractShip ship, Coords coords) throws PutShipBoardException {
 
 		int x = coords.getX()-1;
 		int y = coords.getY()-1;
@@ -170,8 +170,7 @@ public class Board implements IBoard {
                     dx = -1;
                     break;
             }
-
-		
+//on vérifie que la navire ne sort pas du board
 		if ( 
                 (x+(shipSize*dx) > boardsizeX ) || 
                 (y+(shipSize*dy) > boardsizeY ) ||
@@ -180,21 +179,22 @@ public class Board implements IBoard {
                 (x < 0 ) || 
                 (y < 0 )
             )
-
-		//throw new BoardPutShipException("off the board");
-
+			
+			throw new PutShipBoardException("Off limits");
+		
 		for (int i = 0; i < shipSize; i++) 
-            {
-                if (ships[(i*dy)+y][(i*dx)+x] != EMPTY_SHIP) {
+            {//on vérifie que la place n'est pas déja occupé
+                if (ships[(i*dx)+x][(i*dy)+y] != EMPTY_SHIP) {
                     while (i > 0) {
                         i--;
-                        ships[(i*dy)+y][(i*dx)+x] = EMPTY_SHIP;
+                        ships[(i*dx)+x][(i*dy)+y] = EMPTY_SHIP;
                     }
-                    //throw new BoardPutShipException("a ship is already there");
-                        
+                
+                throw new PutShipBoardException("Position occupied");
                 }
-
-                ships[(i*dy)+y][(i*dx)+x] = ship.getType().getValue();
+                
+                ships[(i*dx)+x][(i*dy)+y] = ship.getType().getValue();  
+                
             }
 
 
