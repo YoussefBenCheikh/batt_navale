@@ -1,4 +1,4 @@
-package ensta.model;
+package ensta.model.Board;
 
 import ensta.model.ship.AbstractShip;
 
