@@ -15,9 +15,15 @@ public abstract class AbstractShip {
 	protected Orientation orientation;
 
 	protected ShipLength length;
+	
+	protected int strikeCount;
 
 	public LabelShip getType() {
         return this.type;
+    }
+	
+	public void setType(LabelShip labelship) {
+       this.type = labelship;
     }
 
     public NameShip getName() {
@@ -41,6 +47,7 @@ public abstract class AbstractShip {
     	this.orientation = orientation;
     }
 
+ 
     /** 
      * Create a new ship with label, name, size and orientation provided
      * @param name
@@ -48,7 +55,7 @@ public abstract class AbstractShip {
      * @param length
      * @param orientation
      */
-
+   
     public AbstractShip(NameShip name, LabelShip type, ShipLength length, Orientation orientation){
     	this.name = name;
     	this.type = type;
@@ -61,5 +68,14 @@ public abstract class AbstractShip {
     	this.length = length;
     	this.orientation = orientation;
     }
+    public void addStrike() {
+    	if (strikeCount<length.getValue())
+    		strikeCount++;
+    }
+    public boolean isSunk() {
+    	if(strikeCount>=length.getValue()) return true; 
+    	return false;
+    }
+    
 }
 

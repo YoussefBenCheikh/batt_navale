@@ -1,8 +1,11 @@
 package ensta.model.Board;
 
 import ensta.model.ship.AbstractShip;
+import ensta.util.Coords;
 
 public interface IBoard {
+
+	
 
 	/**
 	 * Get the size of the grids contained in the Board
@@ -20,7 +23,7 @@ public interface IBoard {
 		 * @return true if the ship is put on the board
 		 */
 	/*
-	 * public void putShip(AbstractShip ship, Coords coords);
+	 public void putShip(AbstractShip ship, Coords coords);
 	 * 
 	 *//**
 		 * Get if a ship is placed at the given position

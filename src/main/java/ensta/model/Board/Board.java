@@ -3,11 +3,12 @@ import ensta.model.ship.AbstractShip;
 import ensta.util.Orientation;
 import ensta.util.Coords;
 import ensta.util.*;
+import ensta.model.ship.*;
 
 public class Board implements IBoard {
 
 	private String name;
-	private Character[][] ships;
+	private ShipState[][] ships;
 	private boolean[][] hits;
 
 	private static final int DEFAULT_SIZE = 10;
@@ -19,12 +20,12 @@ public class Board implements IBoard {
 
 	public Board(String name, int size) {
 		this.name = name;
-        this.ships = new Character[size][size];
+        this.ships = new ShipState[size][size];
         this.hits = new boolean[size][size];
 
         for(int i = 0; i < size; i++){
             for(int j = 0; j < size; j++){
-                this.ships[i][j] = EMPTY_SHIP;
+                this.ships[i][j]= null;
                 this.hits[i][j] = EMPTY_HIT;
             }
         }
@@ -72,13 +73,20 @@ public class Board implements IBoard {
             System.out.print(String.format("%2s ", i + 1));
             
             for(int j = 0; j < ships[0].length; j++){
-                System.out.print(ships[i][j] + " ");
+            	if(ships[i][j]!=null)
+                System.out.print(ships[i][j].toString() + " ");
+            	else System.out.print(". ");
             }
             
             System.out.print(String.format(" %2s ", i + 1));
             
             for(int j = 0; j < hits[0].length; j++){
-                System.out.print((hits[i][j] ? 'x' : '.') + " ");
+            	if (hits[i][j]) {
+            		if (ships[i][j].isStruck())
+            			System.out.print(ColorUtil.colorize("x ", ColorUtil.Color.RED));
+            		else System.out.print(ColorUtil.colorize("x ", ColorUtil.Color.WHITE));
+            	} else { System.out.print(". ");}
+                
             }
             System.out.println();
         }
@@ -87,22 +95,18 @@ public class Board implements IBoard {
 	}
 
 
-	@Override
-    public int getSize() {
+	public int getSize() {
         return ships.length * ships[0].length;
     }
 
-    @Override
     public boolean hasShip(Coords coords) {
-        return ships[coords.getX()][coords.getY()] != EMPTY_SHIP;
+        return ships[coords.getX()][coords.getY()] != null;
     }
 
-    @Override
     public Boolean getHit(Coords coords){
     	return hits[coords.getX()][coords.getY()];
     }
 
-    @Override
     public void setHit(boolean hit, Coords coords) {
         hits[coords.getX()][coords.getY()] = hit;
     }
@@ -144,16 +148,16 @@ public class Board implements IBoard {
 		
 		for (int i = 0; i < shipSize; i++) 
             {//on vérifie que la place n'est pas déja occupé
-                if (ships[(i*dx)+x][(i*dy)+y] != EMPTY_SHIP) {
+                if (ships[(i*dx)+x][(i*dy)+y] != null) {
                     while (i > 0) {
                         i--;
-                        ships[(i*dx)+x][(i*dy)+y] = EMPTY_SHIP;
+                        ships[(i*dx)+x][(i*dy)+y] = null;
                     }
                 
                 throw new PutShipBoardException("Position occupied");
                 }
                 
-                ships[(i*dx)+x][(i*dy)+y] = ship.getType().getValue();  
+                ships[(i*dx)+x][(i*dy)+y]=new ShipState(ship, false);  
                 
             }
 

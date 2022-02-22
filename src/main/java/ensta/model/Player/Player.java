@@ -1,10 +1,11 @@
-package ensta.model;
-
+package ensta.model.Player;
+import ensta.model.Board.*;
+import ensta.model.ship.*;
+import ensta.util.*;
 import java.io.Serializable;
 import java.util.List;
 
 import ensta.model.ship.AbstractShip;
-import ensta.util.Orientation;
 import ensta.view.InputHelper;
 
 public class Player {
@@ -39,10 +40,16 @@ public class Player {
 		int i = 0;
 
 		do {
+			 try {
 			AbstractShip ship = ships[i];
 			String msg = String.format("placer %d : %s(%d)", i + 1, ship.getName(), ship.getLength());
 			System.out.println(msg);
 			InputHelper.ShipInput res = InputHelper.readShipInput();
+			System.out.println("X: " + res.x + " Y: " + res.y);
+            ship.setOrientation(Orientation.fromString(res.orientation));
+            Coords crd = new Coords(res.x,res.y);
+            board.putShip(ship, crd);
+
 			// TODO set ship orientation
 			// TODO put ship at given position
 			// TODO when ship placement successful
@@ -50,6 +57,10 @@ public class Player {
 			done = i == 5;
 
 			board.print();
+			} catch(Exception e) {
+	              System.out.println(e.getMessage());
+	        }
+
 		} while (!done);
 	}
 
