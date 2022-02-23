@@ -84,9 +84,9 @@ public class Board implements IBoard {
             
             for(int j = 0; j < hits[0].length; j++){
             	if (hits[i][j]) {
-            		if (ships[i][j].isStruck())
+            		if (ships[i][j]!=null)
             			System.out.print(ColorUtil.colorize("x ", ColorUtil.Color.RED));
-            		else System.out.print(ColorUtil.colorize("x ", ColorUtil.Color.WHITE));
+            		else System.out.print(ColorUtil.colorize("x ", ColorUtil.Color.BLUE));
             	} else { System.out.print(". ");}
                 
             }
@@ -98,7 +98,7 @@ public class Board implements IBoard {
 
 
 	public int getSize() {
-        return ships.length * ships[0].length;
+        return ships.length;
     }
 
     public boolean hasShip(Coords coords) {
@@ -115,13 +115,13 @@ public class Board implements IBoard {
     
     @Override
     public Hit sendHit(int x, int y) {
-    	if(ships[y-1][x-1] == null) {
+    	if(ships[x][y] == null) {
             return Hit.MISS;
         }
-    	ships[y-1][x-1].addStrike();
-    	if(ships[y-1][x-1].isSunk()) {
-    		System.out.println(ships[y-1][x-1].getShip().getName()+" coulé");
-            return Hit.fromInt(ships[y-1][x-1].getShip().getLength().getValue());
+    	ships[x][y].addStrike();
+    	if(ships[x][y].isSunk()) {
+    		System.out.println(ships[x][y].getShip().getName()+" coulé");
+            return Hit.fromInt(ships[x][y].getShip().getLength().getValue());
             
         }
     	
@@ -129,11 +129,16 @@ public class Board implements IBoard {
 
     }
     
+    @Override
+    public Hit sendHit(Coords coords) {
+    	return sendHit(coords.getX(),coords.getY());
+    }
+    
 
 	public void putShip(AbstractShip ship, Coords coords) throws PutShipBoardException {
 
-		int x = coords.getX()-1;
-		int y = coords.getY()-1;
+		int x = coords.getX();
+		int y = coords.getY();
 		int boardsizeX = ships.length;
 		int boardsizeY = ships[0].length;
 		int shipSize = ship.getLength().getValue();
@@ -186,7 +191,48 @@ public class Board implements IBoard {
 	@Override
 	public boolean canPutShip(AbstractShip ship, Coords coords) {
 		// TODO Auto-generated method stub
-		return false;
+		int x = coords.getX();
+		int y = coords.getY();
+		int boardsizeX = ships.length;
+		int boardsizeY = ships[0].length;
+		int shipSize = ship.getLength().getValue();
+		Orientation o = ship.getOrientation();
+		int dx = 0, dy = 0;
+		switch (o) {
+                case NORTH:
+                    dy = -1;
+                    break;
+                case SOUTH:
+                    dy = 1;
+                    break;
+                case EAST:
+                    dx = 1;
+                    break;
+                case WEST:
+                    dx = -1;
+                    break;
+            }
+		//System.out.println(x+(shipSize*dx));
+		//System.out.println(boardsizeX);
+		if ( 
+                (x+(shipSize*dx) > boardsizeX ) || 
+                (y+(shipSize*dy) > boardsizeY ) ||
+                (x+(shipSize*dx) < 0 ) || 
+                (y+(shipSize*dy) < 0 ) ||
+                (x < 0 ) || 
+                (y < 0 )
+            ) return false;
+		for (int i = 0; i < shipSize; i++) 
+        {
+			//on vérifie que la place n'est pas déja occupé
+			
+            if (ships[(i*dx)+x][(i*dy)+y] != null) {
+                return false;
+                }
+        }
+             
+            
+        return true;
 	}
 
 	public void setHit(boolean b, int x, int y) {

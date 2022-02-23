@@ -1,14 +1,20 @@
 package ensta.ai;
 
 import java.io.Serializable;
+import java.util.Random;
 
-import ensta.model.Coords;
-import ensta.model.Hit;
-import ensta.model.IBoard;
+import ensta.util.Coords;
+import ensta.model.Hit.*;
+import ensta.model.Board.IBoard;
 import ensta.model.ship.AbstractShip;
 import ensta.util.Orientation;
 
 public class BattleShipsAI implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/*
 	 * ** Attributs
@@ -60,15 +66,27 @@ public class BattleShipsAI implements Serializable {
 	 * @param ships the ships to put
 	 */
 	public void putShips(AbstractShip ships[]) {
-		Coords coords;
-		Orientation orientation;
+		int x, y;
+        Random rnd = new Random();
+
+		Coords coords = new Coords(0,0);
 		Orientation[] orientations = Orientation.values();
 
 		for (AbstractShip ship : ships) {
 			do {
 				// TODO use Random to pick a random x, y & orientation
+				x = rnd.nextInt(board.getSize());
+                y = rnd.nextInt(board.getSize());
+                ship.setOrientation(orientations[rnd.nextInt(orientations.length)]);
+                coords.setX(x);
+                coords.setY(y);
 			} while (!board.canPutShip(ship, coords));
-			board.putShip(ship, coords);
+			try {
+                board.putShip(ship, coords);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
 		}
 	}
 
@@ -78,11 +96,12 @@ public class BattleShipsAI implements Serializable {
 	 * @return the status of the hit.
 	 */
 	public Hit sendHit(Coords coords) {
+		//System.out.println("here 1");
 		Coords res = null;
 		if (coords == null) {
 			throw new IllegalArgumentException("must provide an initialized array of size 2");
 		}
-
+		//System.out.println("here 2");
 		// already found strike & orientation?
 		if (lastVertical != null) {
 			if (lastVertical) {
@@ -90,7 +109,7 @@ public class BattleShipsAI implements Serializable {
 			} else {
 				res = pickHCoords();
 			}
-
+			//System.out.println("here 5");
 			if (res == null) {
 				// no suitable coords found... forget last strike.
 				lastStrike = null;
@@ -108,13 +127,13 @@ public class BattleShipsAI implements Serializable {
 				lastStrike = null;
 			}
 		}
-
+		System.out.println("here 6");
 		if (lastStrike == null) {
 			res = pickRandomCoords();
 		}
-
+		//System.out.println("here 7");
 		Hit hit = opponent.sendHit(res);
-		board.setHit(hit != Hit.MISS, res);
+		board.setHit(true, res);
 
 		if (hit != Hit.MISS) {
 			if (lastStrike != null) {
@@ -122,8 +141,9 @@ public class BattleShipsAI implements Serializable {
 			}
 			lastStrike = res;
 		}
-
+		//System.out.println("here 8");
 		coords.setCoords(res);
+		
 		return hit;
 	}
 
@@ -132,19 +152,23 @@ public class BattleShipsAI implements Serializable {
 	 */
 
 	private boolean guessOrientation(Coords lastStrike2, Coords res) {
-		return lastStrike2.getX() == res.getY();
+		return lastStrike2.getY() == res.getY();
 	}
 
 	private boolean isUndiscovered(Coords coords) {
-		return coords.isInBoard(board.getSize()) && board.getHit(coords) == null;
+		//return coords.isInBoard(board.getSize()) && board.getHit(coords) == null;
+		int x = coords.getX();
+		int y = coords.getY();
+		return -1<x && -1<y && x<board.getSize() && y<board.getSize() && board.getHit(coords) == false;
 	}
 
 	private Coords pickRandomCoords() {
+		
 		Coords coords;
 		do {
 			coords = Coords.randomCoords(board.getSize());
 		} while (!isUndiscovered(coords));
-
+		
 		return coords;
 	}
 
