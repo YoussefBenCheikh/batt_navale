@@ -3,6 +3,7 @@ import ensta.model.ship.AbstractShip;
 import ensta.util.Orientation;
 import ensta.util.Coords;
 import ensta.util.*;
+import ensta.model.Hit.*;
 import ensta.model.ship.*;
 
 public class Board implements IBoard {
@@ -74,6 +75,7 @@ public class Board implements IBoard {
             
             for(int j = 0; j < ships[0].length; j++){
             	if(ships[i][j]!=null)
+            		
                 System.out.print(ships[i][j].toString() + " ");
             	else System.out.print(". ");
             }
@@ -110,6 +112,23 @@ public class Board implements IBoard {
     public void setHit(boolean hit, Coords coords) {
         hits[coords.getX()][coords.getY()] = hit;
     }
+    
+    @Override
+    public Hit sendHit(int x, int y) {
+    	if(ships[y-1][x-1] == null) {
+            return Hit.MISS;
+        }
+    	ships[y-1][x-1].addStrike();
+    	if(ships[y-1][x-1].isSunk()) {
+    		System.out.println(ships[y-1][x-1].getShip().getName()+" coulé");
+            return Hit.fromInt(ships[y-1][x-1].getShip().getLength().getValue());
+            
+        }
+    	
+    	return Hit.STRIKE;
+
+    }
+    
 
 	public void putShip(AbstractShip ship, Coords coords) throws PutShipBoardException {
 
@@ -134,7 +153,7 @@ public class Board implements IBoard {
                     dx = -1;
                     break;
             }
-//on vérifie que la navire ne sort pas du board
+		//on vérifie que la navire ne sort pas du board
 		if ( 
                 (x+(shipSize*dx) > boardsizeX ) || 
                 (y+(shipSize*dy) > boardsizeY ) ||
@@ -162,5 +181,21 @@ public class Board implements IBoard {
             }
 
 
+	}
+
+	@Override
+	public boolean canPutShip(AbstractShip ship, Coords coords) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void setHit(boolean b, int x, int y) {
+		// TODO Auto-generated method stub
+		 hits[x][y] = b;
+	}
+
+	public Object getHit(int x, int y) {
+		// TODO Auto-generated method stub
+		return hits[x][y];
 	}
 }

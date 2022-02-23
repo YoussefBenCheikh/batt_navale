@@ -7,6 +7,7 @@ import ensta.util.*;
 public class TestBoard {
 	public static void main(String[] args) {
 		
+		
 		Board brd = new Board("Game",  10);
 		
 		Destroyer dstryr = new Destroyer();
@@ -23,9 +24,14 @@ public class TestBoard {
 		brd.putShip(crrr, crd1);
 		brd.putShip(sbmrn, crd3);
 		brd.putShip(btlshp, crd4);
-		brd.print();
+		
 		} catch(PutShipBoardException excp) {
 			excp.printStackTrace();
 		}
+		brd.print();
+		
+		brd.sendHit(6, 6);
+		brd.sendHit(6, 7);
+		brd.print();
 	}
 }

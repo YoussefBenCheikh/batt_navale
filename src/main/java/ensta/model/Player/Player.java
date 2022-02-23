@@ -1,5 +1,6 @@
 package ensta.model.Player;
 import ensta.model.Board.*;
+import ensta.model.Hit.Hit;
 import ensta.model.ship.*;
 import ensta.util.*;
 import java.io.Serializable;
@@ -72,9 +73,18 @@ public class Player {
 			System.out.println("où frapper?");
 			InputHelper.CoordInput hitInput = InputHelper.readCoordInput();
 			// TODO call sendHit on this.opponentBoard
-
-			// TODO : Game expects sendHit to return BOTH hit result & hit coords.
-			// return hit is obvious. But how to return coords at the same time ?
+			if(board.getHit(hitInput.x, hitInput.y) == null) {
+				hit=this.opponentBoard.sendHit(hitInput.x, hitInput.y);
+				// TODO : Game expects sendHit to return BOTH hit result & hit coords.
+				// return hit is obvious. But how to return coords at the same time ?
+				board.setHit(hit != Hit.MISS, hitInput.x, hitInput.y);
+				coords.setX(hitInput.x);
+				coords.setY(hitInput.y);
+				done=true;
+			}
+			else {
+				System.out.println("coup déja fait, choisissez d'autres coordonnées.");
+			}
 		} while (!done);
 
 		return hit;
