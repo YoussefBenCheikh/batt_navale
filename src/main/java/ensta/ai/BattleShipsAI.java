@@ -127,13 +127,13 @@ public class BattleShipsAI implements Serializable {
 				lastStrike = null;
 			}
 		}
-		System.out.println("here 6");
+		//System.out.println("here 6");
 		if (lastStrike == null) {
 			res = pickRandomCoords();
 		}
 		//System.out.println("here 7");
 		Hit hit = opponent.sendHit(res);
-		board.setHit(true, res);
+		board.setHit(hit != Hit.MISS, res);
 
 		if (hit != Hit.MISS) {
 			if (lastStrike != null) {
@@ -159,7 +159,7 @@ public class BattleShipsAI implements Serializable {
 		//return coords.isInBoard(board.getSize()) && board.getHit(coords) == null;
 		int x = coords.getX();
 		int y = coords.getY();
-		return -1<x && -1<y && x<board.getSize() && y<board.getSize() && board.getHit(coords) == false;
+		return -1<x && -1<y && x<board.getSize() && y<board.getSize() && board.getHit(coords) == null;
 	}
 
 	private Coords pickRandomCoords() {

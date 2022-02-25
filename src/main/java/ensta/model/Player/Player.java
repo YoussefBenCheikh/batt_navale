@@ -42,21 +42,31 @@ public class Player {
 
 		do {
 			 try {
+				 //System.out.println("here1");
 			AbstractShip ship = ships[i];
-			String msg = String.format("placer %d : %s(%d)", i + 1, ship.getName(), ship.getLength());
+			//System.out.println("here2");
+			String msg = String.format("placer %d : %s(%d)", i + 1, ship.getName(), ship.getLength().getValue());
+			//System.out.println("here3");
 			System.out.println(msg);
+			//System.out.println("here4");
 			InputHelper.ShipInput res = InputHelper.readShipInput();
+			//System.out.println("here5");
 			System.out.println("X: " + res.x + " Y: " + res.y);
+			//System.out.println("here6");
             ship.setOrientation(Orientation.fromString(res.orientation));
+            System.out.println(Orientation.fromString(res.orientation));
+           // System.out.println("here7");
             Coords crd = new Coords(res.x,res.y);
+           // System.out.println("here8");
             board.putShip(ship, crd);
-
+            
+            //System.out.println("here9");
 			// TODO set ship orientation
 			// TODO put ship at given position
 			// TODO when ship placement successful
 			++i;
 			done = i == 5;
-
+			//System.out.println("here3");
 			board.print();
 			} catch(Exception e) {
 	              System.out.println(e.getMessage());
@@ -73,6 +83,7 @@ public class Player {
 			System.out.println("où frapper?");
 			InputHelper.CoordInput hitInput = InputHelper.readCoordInput();
 			// TODO call sendHit on this.opponentBoard
+			
 			if(board.getHit(hitInput.x, hitInput.y) == null) {
 				hit=this.opponentBoard.sendHit(hitInput.x, hitInput.y);
 				// TODO : Game expects sendHit to return BOTH hit result & hit coords.

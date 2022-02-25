@@ -10,11 +10,11 @@ public class Board implements IBoard {
 
 	private String name;
 	private ShipState[][] ships;
-	private boolean[][] hits;
+	private Boolean[][] hits;
 
 	private static final int DEFAULT_SIZE = 10;
 	private static final char EMPTY_SHIP = '.';
-	private static final boolean EMPTY_HIT= false;
+	private static final Boolean EMPTY_HIT= null;
 	
 	public Board() {
 	}
@@ -22,7 +22,7 @@ public class Board implements IBoard {
 	public Board(String name, int size) {
 		this.name = name;
         this.ships = new ShipState[size][size];
-        this.hits = new boolean[size][size];
+        this.hits = new Boolean[size][size];
 
         for(int i = 0; i < size; i++){
             for(int j = 0; j < size; j++){
@@ -74,19 +74,19 @@ public class Board implements IBoard {
             System.out.print(String.format("%2s ", i + 1));
             
             for(int j = 0; j < ships[0].length; j++){
-            	if(ships[i][j]!=null)
+            	if(ships[j][i]!=null)
             		
-                System.out.print(ships[i][j].toString() + " ");
+                System.out.print(ships[j][i].toString() + " ");
             	else System.out.print(". ");
             }
             
             System.out.print(String.format(" %2s ", i + 1));
             
             for(int j = 0; j < hits[0].length; j++){
-            	if (hits[i][j]) {
-            		if (ships[i][j]!=null)
+            	if (hits[j][i]!=null) {
+            		if (hits[j][i])
             			System.out.print(ColorUtil.colorize("x ", ColorUtil.Color.RED));
-            		else System.out.print(ColorUtil.colorize("x ", ColorUtil.Color.BLUE));
+            		else System.out.print(ColorUtil.colorize("x ", ColorUtil.Color.WHITE));
             	} else { System.out.print(". ");}
                 
             }
@@ -99,6 +99,10 @@ public class Board implements IBoard {
 
 	public int getSize() {
         return ships.length;
+    }
+	
+	public String getName() {
+        return name;
     }
 
     public boolean hasShip(Coords coords) {
@@ -142,7 +146,10 @@ public class Board implements IBoard {
 		int boardsizeX = ships.length;
 		int boardsizeY = ships[0].length;
 		int shipSize = ship.getLength().getValue();
-		Orientation o = ship.getOrientation();
+		Orientation o =  Orientation.fromString("n");
+		o = ship.getOrientation();
+		System.out.println(ship.getOrientation());
+		System.out.println(o);
 		int dx = 0, dy = 0;
 		switch (o) {
                 case NORTH:
@@ -235,12 +242,12 @@ public class Board implements IBoard {
         return true;
 	}
 
-	public void setHit(boolean b, int x, int y) {
+	public void setHit(Boolean b, int x, int y) {
 		// TODO Auto-generated method stub
 		 hits[x][y] = b;
 	}
 
-	public Object getHit(int x, int y) {
+	public Boolean getHit(int x, int y) {
 		// TODO Auto-generated method stub
 		return hits[x][y];
 	}

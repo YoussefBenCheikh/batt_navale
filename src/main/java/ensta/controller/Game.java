@@ -6,16 +6,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import ensta.model.Board;
-import ensta.model.Coords;
-import ensta.model.Hit;
-import ensta.model.Player;
+import ensta.ai.PlayerAI;
+import ensta.model.Board.*;
+import ensta.model.Hit.*;
+import ensta.model.Player.*;
 import ensta.model.ship.AbstractShip;
-import ensta.model.ship.BattleShip;
+import ensta.model.ship.Battleship;
 import ensta.model.ship.Carrier;
 import ensta.model.ship.Destroyer;
 import ensta.model.ship.Submarine;
-import ensta.util.ColorUtil;
+import ensta.util.*;
 
 public class Game {
 
@@ -42,6 +42,27 @@ public class Game {
 
 
 			// TODO init boards
+			String player1Name = "";
+            String player2Name = "AI";
+            try {
+                // init attributes
+                System.out.println("entrez votre nom :");
+
+                sin = new Scanner(System.in);
+                player1Name = sin.nextLine().toLowerCase();
+                
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+            Board brd1 = new Board(player1Name, 5);
+            Board brd2 = new Board(player2Name, 5);
+            
+            player1 = new Player(brd1, brd2, createDefaultShips());
+            player2 = new PlayerAI(brd2, brd1, createDefaultShips());
+            
+            brd1.print();
+            player1.putShips();
+            player2.putShips();
 
 			// TODO init this.player1 & this.player2
 
@@ -54,26 +75,30 @@ public class Game {
 	 * *** Méthodes
 	 */
 	public void run() {
-		Coords coords = new Coords();
+		Coords coords = new Coords(0,0);
 		Board b1 = player1.getBoard();
+		Board b2 = player2.getBoard();
 		Hit hit;
 
 		// main loop
-		b1.print();
+		
 		boolean done;
 		do {
-			hit = Hit.MISS; // TODO player1 send a hit
+			System.out.println(b1.getName());
+			b1.print();
+			hit =  player1.sendHit(coords); // TODO player1 send a hit
 			boolean strike = hit != Hit.MISS; // TODO set this hit on his board (b1)
 
 			done = updateScore();
 			b1.print();
+			
 			System.out.println(makeHitMessage(false /* outgoing hit */, coords, hit));
 
 			// save();
 
 			if (!done && !strike) {
 				do {
-					hit = Hit.MISS; // TODO player2 send a hit.
+					hit = player2.sendHit(coords); // TODO player2 send a hit.
 
 					strike = hit != Hit.MISS;
 					if (strike) {
@@ -161,7 +186,7 @@ public class Game {
 	}
 
 	private static List<AbstractShip> createDefaultShips() {
-		return Arrays.asList(new AbstractShip[] { new Destroyer(), new Submarine(), new Submarine(), new BattleShip(),
+		return Arrays.asList(new AbstractShip[] { new Destroyer(), new Submarine(), new Submarine(), new Battleship(),
 				new Carrier() });
 	}
 }
